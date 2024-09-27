@@ -1,0 +1,10 @@
+.form_container {
+  display: flex;
+  align-items: end;
+  margin-left: 48px;
+}
+
+.filter {
+  width: 360px;
+  margin-right: 24px;
+}
