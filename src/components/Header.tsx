@@ -1,52 +1,68 @@
-import React, { useContext } from "react";
+import { DownOutlined, UserOutlined } from "@ant-design/icons";
+import { Avatar, Button, Dropdown, Menu, Typography } from "antd";
 import classNames from "classnames/bind";
+import { useCallback, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { JWT_TOKEN, USER_DETAILS } from "../constants";
+import { getLoggedUserDetails } from "../helpers";
 import styles from "../styles/Header.module.css";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, Dropdown, Button, Avatar, Typography } from "antd";
-import { UserOutlined, DownOutlined } from "@ant-design/icons";
-import { AuthContext } from "../Auth/AuthContext";
 
 const { Text } = Typography;
 const cx = classNames.bind(styles);
 
+const RenderMenu = ({
+  handleMenuClick,
+}: {
+  handleMenuClick: (e: { key: string }) => void;
+}) => (
+  <Menu onClick={handleMenuClick}>
+    <Menu.Item key="home">Home</Menu.Item>
+    <Menu.Item key="profile">Profile</Menu.Item>
+    <Menu.Item key="booking_history">Booking history</Menu.Item>
+    <Menu.Item key="logout">Logout</Menu.Item>
+  </Menu>
+);
+
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useContext(AuthContext);
 
-  const jwt = localStorage.getItem("jwtToken");
-  const userJson = localStorage.getItem("userDetails");
-  let user;
-  if (userJson) {
-    user = JSON.parse(localStorage.getItem("userDetails") ?? "");
-  }
-  const isLogin = jwt !== null;
-  const getButtonText = jwt ? user?.name : "Sign in / Sign up";
+  const token = useMemo(() => localStorage.getItem(JWT_TOKEN), []);
+  const user = useMemo(() => getLoggedUserDetails(), []);
 
-  const handleMenuClick = (e: { key: string }) => {
-    if (e.key === "profile") {
-      navigate("/profile");
-    } else if (e.key === "logout") {
-      navigate("/register");
-      logout();
-    }
-  };
-
-  const handleButtonClick = () => {
-    if (!isLogin) {
-      navigate("/register"); // Navigate to the registration page if not logged in
-    }
-  };
-
-  const menu = (
-    <Menu onClick={handleMenuClick}>
-      <Menu.Item key="profile">Profile</Menu.Item>
-      <Menu.Item key="logout">Logout</Menu.Item>
-    </Menu>
+  const isLogin = useMemo(() => token !== null, [token]);
+  const getButtonText = useMemo(
+    () => (isLogin ? user?.name : "Sign in / Sign up"),
+    [token, user]
   );
 
-  const shouldShowProfile =
-    location.pathname !== "/register" && location.pathname !== "/";
+  const handleMenuClick = useCallback(
+    (e: { key: string }) => {
+      if (e.key === "profile") {
+        navigate("/profile");
+      } else if (e.key === "logout") {
+        localStorage.removeItem(JWT_TOKEN);
+        localStorage.removeItem(USER_DETAILS);
+        navigate("/login");
+      } else if (e.key === "booking_history") {
+        navigate("/booking_history");
+      } else if (e.key === "home") {
+        navigate("/home");
+      }
+    },
+    [navigate]
+  );
+
+  const handleButtonClick = useCallback(() => {
+    if (!isLogin) {
+      navigate("/login");
+    }
+  }, [isLogin, navigate]);
+
+  const shouldShowProfile = useMemo(
+    () => location.pathname !== "/login" && location.pathname !== "/",
+    [location.pathname]
+  );
 
   return (
     <header className={cx("container")}>
@@ -56,7 +72,11 @@ const Header = () => {
       {shouldShowProfile && (
         <div className={cx("profile")}>
           {isLogin ? (
-            <Dropdown overlay={menu} trigger={["hover"]}>
+            <Dropdown
+            placement="bottomRight"
+              overlay={<RenderMenu handleMenuClick={handleMenuClick} />}
+              // trigger={["hover"]}
+            >
               <Button type="text" style={{ padding: 0 }}>
                 <Avatar icon={<UserOutlined />} />
                 <>

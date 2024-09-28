@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
-import { AuthContext } from "../Auth/AuthContext";
-import { Card, Row, Col } from "antd";
+import { Card, Col, Row } from "antd";
+import { getLoggedUserDetails } from "../helpers";
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const user = getLoggedUserDetails();
+
   return (
     <Card
       style={{

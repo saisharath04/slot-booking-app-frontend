@@ -1,20 +1,9 @@
-export type Location = {
-  name: string;
-  id: string;
-};
-
-export type FiltersParamsType = {
-  date: any;
-  location_id: string;
-  sport?: SportType;
-};
-
-export type SportType = "Cricket" | "Football" | "Badminton" | "Tennis";
-
-export type SelectedSlotsTypes = {
-  start_time?: string;
-  end_time?: string;
-  is_booked: boolean;
+export type ErrorMessageType = {
+  response: {
+    data: {
+      message: string;
+    };
+  };
 };
 
 export type LoginApiPayloadType = {
@@ -25,11 +14,11 @@ export type LoginApiPayloadType = {
 export type LoginApiResponseType = {
   success: boolean;
   message: string;
-  user: User;
+  user_details: UserType;
   token: string;
 };
 
-export interface User {
+export interface UserType {
   id: number;
   name: string;
   email: string;
@@ -46,27 +35,21 @@ export type RegisterApiPayloadType = {
 export type RegisterApiResponseType = {
   success: boolean;
   message: string;
+  status: number;
+  user_details: UserType;
 };
 
-export type ErrorMessageType = {
-  response: {
-    data: {
-      message: string;
-    };
-  };
-};
-
-export type LocationListPayloadType = {
+export type CentersListPayloadType = {
   id?: number;
 };
 
-export type LocationListResponseType = {
+export type CentersListResponseType = {
   success: boolean;
   total_count: number;
-  data: LocationDatumType[];
+  centers: CenterEntityType[];
 };
 
-export interface LocationDatumType {
+export interface CenterEntityType {
   id: number;
   name: string;
   address: string;
@@ -79,10 +62,113 @@ export type FacilitiesListPayloadType = {
 export type FacilitiesListResponseType = {
   success: boolean;
   total_count: number;
-  data: FacilitiesDatumType[];
+  data: FacilityEntityType[];
 };
 
-export type FacilitiesDatumType = {
+export type FacilityEntityType = {
   id: number;
+  center_id: number;
   name: string;
+  available_slots: SlotEntityType[];
+  created_at: string;
+};
+
+export type SlotEntityType = {
+  end_time: string;
+  start_time: string;
+};
+
+export type CreateBookingPayloadType = {
+  user_id: number;
+  facility_id: number;
+  booking_date: string;
+  slots: SlotEntityType[];
+  customer_name: string;
+  customer_phone_number: string;
+};
+
+export type PostApiResponseType = {
+  success: boolean;
+  message: string;
+};
+
+export type ViewBookingsListPayloadType = {
+  id?: number;
+  facility_id?: number;
+  booking_date?: string;
+  customer_name?: string;
+  page: number
+};
+
+export type ViewBookingsResponseType = {
+  success: boolean;
+  total_count: number;
+  booking_list: BookingEntityType[];
+};
+
+export type BookingEntityType = {
+  id: number;
+  user_id: number;
+  facility_id: number;
+  booking_date: string;
+  start_time: string;
+  end_time: string;
+  created_at: string;
+  customer_name: string;
+  customer_phone_number: string;
+  user_name: string;
+  facility_name: string;
+  center_name: string;
+};
+
+export type UpdateBookingPayloadType = {
+  id: number;
+  user_id: number;
+  facility_id: number;
+  booking_date: string;
+  start_time: string;
+  end_time: string;
+  customer_name: string;
+  customer_phone_number: string;
+};
+
+export type DeleteBookingPayloadType = {
+  id: number;
+};
+
+export type SlotAvailabilityPayloadType = {
+  booking_date: string;
+  facility_id: number;
+};
+
+export type SlotAvailabilityResponseType = {
+  success: boolean;
+  available_slots: AvailableSlot[];
+};
+
+export type AvailableSlot = {
+  start_time: string;
+  end_time: string;
+  is_booked: boolean;
+};
+
+export type BookingSlotFiltersType = {
+  booking_date: string;
+  location_id?: number;
+  facility_id?: number;
+};
+
+export type BookingHistoryFiltersType = {
+  id?: string;
+  customer_name?: string;
+  booking_date: string;
+  location_id?: number;
+  facility_id?: number;
+  page: number
+};
+
+export type SelectedSlotsTypes = {
+  start_time?: string;
+  end_time?: string;
+  is_booked: boolean;
 };

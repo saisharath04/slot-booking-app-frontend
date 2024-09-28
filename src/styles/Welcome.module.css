@@ -19,11 +19,8 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 1);
-  /* Light overlay to dim slightly */
   opacity: 0.4;
-  /* Reduced opacity for a less dim effect */
   z-index: -1;
-  /* Keep this behind the content */
 }
 
 .content {
@@ -33,7 +30,6 @@
   align-items: center;
   font-size: 1.7rem;
   color: white;
-  /* Semi-transparent background to enhance text visibility */
   padding: 20px;
   border-radius: 8px;
 }

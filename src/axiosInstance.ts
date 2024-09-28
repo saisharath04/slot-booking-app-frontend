@@ -1,4 +1,5 @@
 import axios from "axios";
+import { JWT_TOKEN } from "./constants";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:25088/api",
@@ -6,8 +7,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("jwtToken");
-
+    const token = localStorage.getItem(JWT_TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -15,7 +15,6 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
-    // Handle request error
     return Promise.reject(error);
   }
 );
